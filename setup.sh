@@ -269,7 +269,7 @@ do
             config_vscode
             echo "done";;
 
-        9)
+        A)
             echo "do all"
             add_ppa
             update_system
