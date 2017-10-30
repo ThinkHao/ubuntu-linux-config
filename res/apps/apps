@@ -1,3 +1,5 @@
+mysql-client
+mysql-server
 tree
 ranger
 git
@@ -5,6 +7,9 @@ htop
 vim
 tlp
 zsh
+fcitx
+shadowsocks
+numblockx
 terminator
 autojump
 tmux
@@ -20,14 +25,14 @@ typora
 caffeine-plus
 rar
 unrar
-mysql-client
-mysql-server
 arc-flatabulous-theme
 albert
 indicator-keylock
 indicator-netspeed
 classicmenu-indicator
+proxychains
 python3-pip
+python3-lxml
 python-pip
 python-xdg
 python-gtk2
@@ -36,5 +41,6 @@ python-glade2
 python-pexpect
 python-appindicator 
 libxxf86vm1
+gcc
 gcc-multilib
 aptitude

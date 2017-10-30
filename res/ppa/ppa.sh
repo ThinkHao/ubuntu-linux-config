@@ -3,16 +3,16 @@
 # SOFTWARE
 
 # typora
-sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys BA300B7755AFCFAE;
-sudo add-apt-repository 'deb https://typora.io ./linux/';
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys BA300B7755AFCFAE -y;
+sudo add-apt-repository 'deb https://typora.io ./linux/'-y;
 # indicator-keylock
-sudo add-apt-repository ppa:tsbarnes/indicator-keylock;
+sudo add-apt-repository ppa:tsbarnes/indicator-keylock -y;
 # incicator netspeed
-sudo add-apt-repository ppa:nilarimogard/webupd8
+sudo add-apt-repository ppa:nilarimogard/webupd8 -y
 # ClassicMenu Indicator
-sudo apt-add-repository ppa:diesch/testing;
+sudo apt-add-repository ppa:diesch/testing -y;
 # albert
-sudo add-apt-repository ppa:nilarimogard/webupd8
+sudo add-apt-repository ppa:nilarimogard/webupd8 -y
 
 
 #################################################
@@ -20,7 +20,7 @@ sudo add-apt-repository ppa:nilarimogard/webupd8
 
 # numix
 # sudo add-apt-repository ppa:numix/ppa；
-sudo add-apt-repository ppa:noobslab/themes
+sudo add-apt-repository ppa:noobslab/themes -y
 # Flatabulous
 # sudo add-apt-repository ppa:noobslab/themes
 

@@ -10,6 +10,8 @@ PPA=$HERE/res/ppa/ppa.sh
 VIM=$HERE/res/vim/.vimrc
 # my zsh config
 ZSH=$HERE/res/zsh/zshrc
+# my ss config
+SS=$HERE/res/shadowsocks/shadowsocks.json
 # applications will be installed
 APPS=$HERE/res/apps/apps
 # fonts in there
@@ -40,7 +42,7 @@ check_software() {
         print_log "$1 had been installed"
     else
         print_log "$1 is not installed, installing now"
-        sudo $2 $1
+        sudo $2 $1 -y
     fi
 }
 
@@ -48,7 +50,7 @@ check_software() {
 update_system()
 {
     print_log "UPDATE SYSTEM..."
-    sudo apt update
+    sudo apt update -y
     if [ $? = 0 ] 
         then print_log "UPDATE SYSTEM SUCCESSFULLY"
     else
@@ -112,6 +114,55 @@ config_zsh()
     fi
 }
 
+## config the shadowsocks
+## You need to config the /res/shadowsocks/shadowsocks.json first
+config_shadowsocks()
+{
+    print_log "CONFIG SS"
+    cp $SS /etc/shadowsocks.json
+    sudo sed -i "13a    \# Shadowsocks\nnohup /usr/bin/sslocal -c /etc/shadowsocks.json 1>/dev/null 2>/dev/null &" /etc/rc.local
+    print_log "done"
+}
+
+## config the numlockx
+config_numlockx()
+{
+    print_log "CONFIG Numlockx"
+    sudo sed -i "13a    \# Numlock on\nif [-x /usr/bin/numlockx ]; then\n/usr/bin/numlockx on\nfi" /etc/rc.local
+    print_log "done"
+}
+
+## config the proxychains
+config_proxychains()
+{
+    print_log "CONFIG Proxychains"
+    sudo sed -i '$d' /etc/proxychains.conf
+    sudo sed -i '$ a\socks5       127.0.0.1 1081' /etc/proxychains.conf
+    print_log "done"
+}
+
+## config the pyenv
+config_pyenv()
+{
+    print_log "CONFIG Pyenv"
+    git clone https://github.com/pyenv/pyenv.git ~/.pyenv
+    echo 'export PYENV_ROOT="$HOME/.pyenv"' >> ~/.zshenv
+    echo 'export PATH="$PYENV_ROOT/bin:$PATH"' >> ~/.zshenv
+    echo -e 'if command -v pyenv 1>/dev/null 2>&1; then\n  eval "$(pyenv init -)"\nfi' >> ~/.zshenv
+    source ~/.zshenv
+    print_log "done"
+}
+
+## config the virtualenv
+config_virtualenv()
+{
+    print_log "CONFIG Virtualenv"
+    git clone https://github.com/pyenv/pyenv-virtualenv.git $(pyenv root)/plugins/pyenv-virtualenv
+    echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.zshenv
+    source ~/.zshenv
+    print_log "done"
+}
+
 ## add ppa
 add_ppa()
 {
@@ -148,7 +199,7 @@ install_apps()
 
     for app in $applications; do
         print_log "STARTING TO INSTALL $app"
-        sudo apt install ${app}
+        sudo apt install ${app} -y
         status=$?
         if [ $status = 0 ] 
         then
@@ -179,6 +230,49 @@ install_apps()
     python setup.py install --user 
     cd $HERE
 
+    # install youdao dictionary
+    print_log "INSTALL youdao"
+
+    sudo git clone https://github.com/longcw/youdao.git /opt/youdao_dict
+    cd /opt/youdao_dict/
+    sudo python setup.py install
+    cd $HERE
+
+    # install cloudmusic
+    print_log "INSTALL cloudmusic"
+    cd /tmp
+    netMusicLink="http://s1.music.126.net/download/pc/netease-cloud-music_1.0.0-2_amd64_ubuntu16.04.deb"
+    netMusicName="netMusic.deb"
+    sudo wget -O ${netMusicName} -c ${netMusicLink}
+    sudo dpkg -i ${netMusicName} 
+
+    # install vbox
+    print_log "INSTALL vbox"
+    virtualBoxLink="http://download.virtualbox.org/virtualbox/5.2.0/virtualbox-5.2_5.2.0-118431~Ubuntu~xenial_amd64.deb"
+    virtualBoxName="virtualBox.deb"
+    sudo wget -O ${virtualBoxName} -c ${virtualBoxLink}
+    sudo dpkg -i ${virtualBoxName}
+
+    # install sougou input
+    print_log "INSTALL sougou input"
+    sougouLink="http://cdn2.ime.sogou.com/dl/index/1491565850/sogoupinyin_2.1.0.0086_amd64.deb?st=bBYOyY4OxnTa-_ElgJuKDw&e=1508784697&fn=sogoupinyin_2.1.0.0086_amd64.deb"
+    sougouName="sougou.deb"
+    sudo wget -O ${sougouName} -c ${sougouLink}
+    sudo dpkg -i ${sougouName}
+    cd $HERE
+
+    # install chrome && WPS
+    # You may uncomment 6 lines if you have the deb packages
+    #
+    #print_log "INSTALL Chrome"
+    #cd $HERE/res/apps/
+    #sudo dpkg -i google-chrome-stable*.deb
+    #sudo dpkg -i wps-office*.deb
+    #sudo dpkg -i winfonts*.deb
+    #sudo dpkg -i symbol-fonts*.deb
+
+    # resolve dependence
+    sudo apt -f install
     print_log "INSTALL APPLICATIONS DONE"
 }
 
@@ -231,18 +325,23 @@ while getopts 012345678A option
 do
     case "$option" in
         0)
-            echo "install application on your ubuntu" 
+            echo "install application on your ubuntu and do some configrations " 
             update_system
             install_apps
+            config_shadowsocks
+            config_numlockx
+            config_proxychains
             echo "done";;
 
         1)
-            echo "install Monaco && microsoft yahei fonts on your ubuntu"
+            echo "install Monaco && microsoft yahei && windows' fonts on your ubuntu"
             config_font
             echo "done";;
         2)
-            echo "config zsh on your ubuntu"
+            echo "config zsh and pyenv&&virtualenv on your ubuntu"
             config_zsh
+            config_pyenv
+            config_virtualenv
             echo "done";;
         3)
             echo "config vim on your ubuntu"
@@ -274,12 +373,18 @@ do
             add_ppa
             update_system
             install_apps
+            config_shadowsocks
+            config_numlockx
+            config_proxychains
             config_font
             powerline_fonts
             config_vim
             config_zsh
+            config_pyenv
+            config_virtualenv
             config_icons
             config_theme
+            config_vscode
             echo "done";;
 
         \?)
@@ -287,14 +392,14 @@ do
             echo "----------------------------------------------------------------------"
             echo "|-0  install applications                                            |"
             echo "|-1  install monaco && micosoft yahei fonts                          |"
-            echo "|-2  config zsh                                                      |"
+            echo "|-2  config zsh and pyenv&&virtualenv                                                    |"
             echo "|-3  config vim                                                      |"
             echo "|-4  config icons                                                    |"
             echo "|-5  install powerline fonts                                         |"
             echo "|-6  add ppa                                                         |"
             echo "|-7  Ambiance_Mac theme                                              |"
             echo "|-8  visual studio code                                              |"    
-            echo "|-9  do all for your system, if your system is new one               |"
+            echo "|-A  do all for your system, if your system is new one               |"
             echo "----------------------------------------------------------------------"
             echo "------------------------------NOTE------------------------------------"
             echo "|if you use zsh && vim, you should install powerline fonts at first  |"
