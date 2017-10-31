@@ -31,6 +31,7 @@ indicator-keylock
 indicator-netspeed
 classicmenu-indicator
 proxychains
+putty
 python3-pip
 python3-lxml
 python-pip
