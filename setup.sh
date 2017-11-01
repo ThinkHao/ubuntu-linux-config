@@ -18,6 +18,8 @@ APPS=$HERE/res/apps/apps
 FONTS=$HERE/res/font/Monaco
 # theme
 THEME=$HERE/res/themes/Ambiance_Mac
+# background
+BACKGROUND=$HERE/res/background/*
 # vscode
 VS_CODE=$HERE/res/vscode/*
 # log wil be write into this file
@@ -296,6 +298,13 @@ config_theme()
     sudo cp -r $THEME /usr/share/themes
 }
 
+## background
+config_background()
+{
+    print_log "ADD some backgrounds"
+    print_log "CP backgrounds TO ~/Pictures/"
+    cp $BACKGROUND ~/Picture/
+}
 
 ## powerline font
 powerline_fonts()
@@ -360,8 +369,9 @@ do
             add_ppa
             echo "done";;
         7)
-            echo "Ambiance_Mac theme"
+            echo "Ambiance_Mac theme and backgrounds"
             config_theme
+            config_background
             echo "done";;
         8)
             echo "visual studio code"
@@ -384,6 +394,7 @@ do
             config_virtualenv
             config_icons
             config_theme
+            config_background
             config_vscode
             echo "done";;
 
