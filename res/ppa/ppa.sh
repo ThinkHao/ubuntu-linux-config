@@ -9,6 +9,8 @@ sudo add-apt-repository 'deb https://typora.io ./linux/'-y;
 sudo add-apt-repository ppa:tsbarnes/indicator-keylock -y;
 # incicator netspeed
 sudo add-apt-repository ppa:nilarimogard/webupd8 -y
+# clementine
+sudo add-apt-repository ppa:me-davidsansome/clementine -y
 # ClassicMenu Indicator
 sudo apt-add-repository ppa:diesch/testing -y;
 # albert
