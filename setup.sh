@@ -303,7 +303,7 @@ config_background()
 {
     print_log "ADD some backgrounds"
     print_log "CP backgrounds TO ~/Pictures/"
-    cp $BACKGROUND ~/Picture/
+    cp $BACKGROUND ~/Pictures/
 }
 
 ## powerline font
